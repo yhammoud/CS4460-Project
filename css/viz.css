@@ -21,9 +21,8 @@ body {
 
 .container {
     margin: 1em auto;
-    width: 90%;
+    width: 95%;
 }
-
 h1 {
     color: #AB2418;
 }
@@ -74,13 +73,24 @@ h1 {
 
     .map {
         height: 800px;
-        width: 1400px;
+        width: 1300px;
     }
 
 .charts {
     overflow: hidden;
     clear: both;
     margin-bottom: 2em;
+}
+#dod {
+    float: right;
+    position: absolute;
+    margin-left: 71%;
+    margin-top: 20px;
+    padding-top: 5px;
+    padding-left: 20px;
+    height: 400px;
+    width: 400px;
+    background-color: rgba(255,255,255,0.7);
 }
 
     .charts .area {
