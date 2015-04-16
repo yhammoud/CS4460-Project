@@ -1,10 +1,11 @@
 (function init(){
 
 
-    var airports;       // stores the airports.csv data
+    var airports = [];       // stores the airports.csv data
     var map;            // sotres the map data from datamaps
-    var wlSample;       // stores the wildlife data
+    var wlSample = [];       // stores the wildlife data
     var airportIDs = [];// stores the airportIDs
+    var top5 = [];
 
 
     /*
@@ -14,7 +15,9 @@
     */
     function fetchWildLifeDataSample() {
         d3.csv('data/wildlife.csv', function(data) {
-            wlSample = data;
+            wlSample = data.map(function(d) {
+                return d;
+            });
             function editAirportID(data, index, array, fieldname, replace, value, mode) {
                 var newObj = data;
                 if (newObj[fieldname] == replace) {
@@ -31,7 +34,6 @@
                 t2= editAirportID(d, index, array, "AIRPORT_ID", s1, s2, 0);
                 return t2;
             });
-
         });
 
     }
@@ -56,6 +58,80 @@
         });
     }
 
+    function drawCharts(data){
+        d3.selectAll('.hidden').classed('hidden', false);
+
+        var crfl = crossfilter(data); // create crossfilter instance
+
+        // create dimensions
+        var spcsDim = crfl.dimension(function(d) { return d. SPECIES; });
+        var monthDim = crfl.dimension(function(d) { return d.INCIDENT_MONTH; });
+        var yearDim = crfl.dimension(function(d) { return d.INCIDENT_YEAR; });
+
+        // define data groups
+        var all = crfl.groupAll();
+        var numIncidentsBySpecies = spcsDim.group();
+        var numIncidentsByMonth = monthDim.group();
+        var numIncidentsByYear = yearDim.group();
+
+        var maxYear = yearDim.bottom(1)[0]["INCIDENT_YEAR"];
+        var minYear = yearDim.top(1)[0]["INCIDENT_YEAR"];
+        var maxMonth = monthDim.bottom(1)[0]["INCIDENT_MONTH"];
+        var minMonth = monthDim.top(1)[0]["INCIDENT_MONTH"];
+
+        var speciesChart = dc.barChart('#species-chart');
+        var yearChart = dc.barChart('#year-chart');
+        var monthlyChart = dc.barChart('#month-chart');
+
+        // adds chart to svg
+        speciesChart
+            .width(1000)
+            .height(300)
+            .margins({top: 10, right: 50, bottom: 30, left: 50})
+            .dimension(spcsDim)
+            .group(numIncidentsBySpecies)
+            .transitionDuration(500)
+            .x(d3.scale.ordinal().domain(spcsDim))
+            .xUnits(dc.units.ordinal)
+            .elasticY(true)
+            .ordinalColors(['#E1B74D'])
+            .renderHorizontalGridLines(true)
+            .yAxisLabel("Frequency")
+            .yAxis().ticks(10);
+
+
+        yearChart
+            .width(900)
+            .height(300)
+            .margins({top: 10, right: 50, bottom: 30, left: 50})
+            .dimension(yearDim)
+            .group(numIncidentsByYear)
+            .transitionDuration(500)
+            .x(d3.time.scale().domain([maxYear, minYear]))
+            .elasticY(true)
+            .ordinalColors(['#E1B74D'])
+            .renderHorizontalGridLines(true)
+            .xAxisLabel("Year")
+            .yAxis().ticks(6);
+
+        monthlyChart
+            .width(900)
+            .height(250)
+            .margins({top: 10, right: 50, bottom: 30, left: 50})
+            .dimension(monthDim)
+            .group(numIncidentsByMonth)
+            .transitionDuration(500)
+            .x(d3.time.scale().domain([1, 12]))
+            .elasticY(true)
+            .ordinalColors(['#E1B74D'])
+            .renderHorizontalGridLines(true)
+            .xAxisLabel("Month")
+            .yAxis().ticks(6);
+        dc.renderAll();
+
+
+    }
+
     /*
     * Draws a circle to represent the airport at the appropriate coordinates.
     * Sets the circle size and color(fill).
@@ -64,7 +140,7 @@
     function drawAirport(originator){
         var paths = [];
         var bubbles = [];
-
+        // console.log(airports);
             var path = {
                 origin: {
                     latitude: originator.latitude,
@@ -76,7 +152,13 @@
         originator.radius = 20;
         originator.fillKey = 'origin';
 
+        //if (strikes < top 5th strikes)
+        //  radius = 10;
+        // else
+        //    radius = sqrt(strikes);
+
         bubbles.push(originator);
+        //console.log(bubbles);
 
         map.bubbles(bubbles, {
             popupTemplate: function(geo, data) {
@@ -117,12 +199,14 @@
     * Store the top 10 airports (strikes number) in arr[]
     * Draw each airport in arr[]
     */
-    // function getTop10Airports() {
-    //     var arr;
+    // function getTop5Airports() {
+    //     var arr = [];
+    //     var tops;
     //     var tmp = {}, tops = [];
     //     var sample = wlSample.map(function(d, index, array) {
     //         airportIDs.push(d.AIRPORT_ID);
     //     });
+    //     //console.log(sample);
     //     // Create object with count of occurances of each array element
     //     airportIDs.forEach(function(item) {
     //         tmp[item] = tmp[item] ? tmp[item]+1 : 1;
@@ -132,10 +216,16 @@
     //     tops = Object.keys(tmp).sort(function(a, b) { return tmp[a] - tmp[b] });
 
     //     // Return last n elements in reverse order
-    //     arr = (tops.slice(-(10)).reverse());
-    //     return arr;
-    // }
+    //     arr = (tops.slice(-(5)).reverse());
+    //     // console.log(arr);
 
+    //     arr.forEach(function(d) {
+    //         top5.push(filterAirportsCSV(d));
+    //     });
+    //     //console.log(top5);
+
+    //     return top5;
+    // }
 
     /*
     * Filter airports by airport ID
@@ -147,6 +237,28 @@
         });
         return sample;
     }
+
+    // function getSpeciesByAirport(airport_id) {
+    //     var sample = filterAirports(airport_id);
+    //     var spcs = sample.map(function(d, index, array) {
+    //         return d.SPECIES;
+    //     });
+    //     spcs.sort();
+    //     // console.log(spcs);
+    //     return spcs;
+    // }
+
+    // function getSpeciesFreqByAirport(airport_id, species) {
+    //     var frequency = 0;
+    //     var spcs = getSpeciesByAirport(airport_id);
+    //     spcs.forEach(function(d) {
+    //         if (d == species) {
+    //             frequency++;
+    //         }
+    //     });
+    //     return frequency;
+    // }
+
 
     /*
     * Gets the airport IDs and stores it in airportIDs[].
@@ -176,18 +288,17 @@
         return total;
     }
 
-    // function onStart(evt, selected) {
-    //     getTop10Airports();
-    // }
 
     /*
     *
     *
     */
     function onAirportChanged(evt, selected) {
+        var sample = filterAirports(selected.iataCode);
+        // check if sample is NULL
+        // if NUll print error message
+        drawCharts(sample);
         drawAirport(selected);
-        //filterAirports(selected.iataCode);
-        getTotalCostsByAirport(selected.iataCode);
     }
 
     function initializeInput(){
@@ -237,12 +348,10 @@
             }
         });
         map.labels();
-        map.legend();
     }
 
     fetchAirportsData();
     fetchWildLifeDataSample();
     initializeMap();
-    // onStart();
 
 }());

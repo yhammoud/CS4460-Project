@@ -17,14 +17,30 @@
             <div class="overlay">
                 <input id="dep" type="text" placeholder="Look up an airport" disabled class=" dep typeahead">
                 </span>
-                <span id="msg" class="error msg">We can't find flights from this location</span>
+                <span id="msg" class="error msg">We can't find strikes from this location</span>
             </div>
-            <div id="dod" class="overlay">
-                    <h2>Strikes Details<h2>
-                </div>
 
             <div id="map" class="area map">
-                <h2 class="hidden">Routes reached by departing airport</h2>
+                <h2 class="hidden">Strikes occured from this airport</h2>
+            </div>
+
+             <div class="charts clearfix hidden">
+                <div id="species-chart" class="area">
+                    <h2>Species Frequency</h2>
+                    <button type="button" class="reset">reset</button>
+                </div>
+            </div>
+            <div class="charts clearfix hidden">
+                <div id="year-chart" class="area">
+                    <h2>Strikes per Year</h2>
+                    <button type="button" class="reset">reset</button>
+                </div>
+            </div>
+            <div class="charts hidden">
+                <div id="month-chart" class="area col-2 clearfix">
+                    <h2>Strikes per Month</h2>
+                    <button type="button" class="reset">reset</button>
+                </div>
             </div>
 
 
@@ -38,6 +54,7 @@
         <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
         <script src="//cdnjs.cloudflare.com/ajax/libs/typeahead.js/0.10.4/typeahead.bundle.min.js"></script>
         <script src="js/datamaps.usa.min.js"></script>
+        <script src="js/dc.js"></script>
         <script src="js/viz.js"></script>
     </body>
 </html>

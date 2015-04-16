@@ -81,17 +81,7 @@ h1 {
     clear: both;
     margin-bottom: 2em;
 }
-#dod {
-    float: right;
-    position: absolute;
-    margin-left: 71%;
-    margin-top: 20px;
-    padding-top: 5px;
-    padding-left: 20px;
-    height: 400px;
-    width: 400px;
-    background-color: rgba(255,255,255,0.7);
-}
+
 
     .charts .area {
         padding-top: 4em;
@@ -133,7 +123,7 @@ h1 {
 }
 
 
-/* SVG
+ SVG
 svg .bar rect {
     fill: rgba(214, 39, 40, 0.7);
     stroke: rgba(214, 39, 40, 0.9);
@@ -146,7 +136,7 @@ svg .bar rect {
     }
 
 svg .tick line {
-    stroke: transparent;
+    stroke: black;
 }
 
 svg .tick text {
@@ -159,8 +149,8 @@ svg .axis text {
 
 svg .axis path,
 svg .axis line {
-    fill: none;
+    fill: lightyellow;
     shape-rendering: crispEdges;
 }
-*/
+
 
