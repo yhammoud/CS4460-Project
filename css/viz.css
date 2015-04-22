@@ -73,8 +73,14 @@ h1 {
 
     .map {
         height: 800px;
-        width: 1300px;
+        width: 1200px;
+        float: left;
     }
+#pie-chart {
+    float: right;
+    height: 500px;
+    width: 300px;
+}
 
 .charts {
     overflow: hidden;
@@ -92,10 +98,6 @@ h1 {
         float: left;
     }
 
-    #airline-chart {
-        width: 400px;
-        padding-right: 2em;
-    }
 
 .reset {
     position: absolute;

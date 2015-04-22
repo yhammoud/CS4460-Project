@@ -82,6 +82,7 @@
         var speciesChart = dc.barChart('#species-chart');
         var yearChart = dc.barChart('#year-chart');
         var monthlyChart = dc.barChart('#month-chart');
+        var donut = dc.pieChart("#pie-chart");
 
         // adds chart to svg
         speciesChart
@@ -93,11 +94,13 @@
             .transitionDuration(500)
             .x(d3.scale.ordinal().domain(spcsDim))
             .xUnits(dc.units.ordinal)
+            .centerBar(true)
             .elasticY(true)
             .ordinalColors(['#E1B74D'])
-            .renderHorizontalGridLines(true)
             .yAxisLabel("Frequency")
+            .title(function (d) { return "Species: " + d.key + "\nFrequency: " +  d.value; })
             .yAxis().ticks(10);
+
 
 
         yearChart
@@ -127,6 +130,16 @@
             .renderHorizontalGridLines(true)
             .xAxisLabel("Month")
             .yAxis().ticks(6);
+
+        donut
+            .width(300)
+            .height(300)
+            .slicesCap(5)
+            .innerRadius(10)
+            .dimension(spcsDim)
+            .innerRadius(100)
+            .group(numIncidentsBySpecies) // by default, pie charts will use group.key as the label
+            .renderLabel(true);
         dc.renderAll();
 
 
