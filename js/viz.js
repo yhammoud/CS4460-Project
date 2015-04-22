@@ -94,17 +94,19 @@
             .transitionDuration(500)
             .x(d3.scale.ordinal().domain(spcsDim))
             .xUnits(dc.units.ordinal)
-            .centerBar(true)
             .elasticY(true)
+            .elasticX(true)
+            .xAxisPadding(10)
             .ordinalColors(['#E1B74D'])
             .yAxisLabel("Frequency")
             .title(function (d) { return "Species: " + d.key + "\nFrequency: " +  d.value; })
-            .yAxis().ticks(10);
-
+            .gap(1)
+            .xAxisLabel('Species (Hover for details)')
+            .xAxis().tickFormat(function(d) { return ''; });
 
 
         yearChart
-            .width(900)
+            .width(1000)
             .height(300)
             .margins({top: 10, right: 50, bottom: 30, left: 50})
             .dimension(yearDim)
@@ -112,13 +114,14 @@
             .transitionDuration(500)
             .x(d3.time.scale().domain([maxYear, minYear]))
             .elasticY(true)
+            .xAxisPadding(100)
             .ordinalColors(['#E1B74D'])
             .renderHorizontalGridLines(true)
             .xAxisLabel("Year")
             .yAxis().ticks(6);
 
         monthlyChart
-            .width(900)
+            .width(1000)
             .height(250)
             .margins({top: 10, right: 50, bottom: 30, left: 50})
             .dimension(monthDim)
@@ -140,6 +143,7 @@
             .innerRadius(100)
             .group(numIncidentsBySpecies) // by default, pie charts will use group.key as the label
             .renderLabel(true);
+
         dc.renderAll();
 
 
