@@ -5,7 +5,6 @@
     var map;            // sotres the map data from datamaps
     var wlSample = [];       // stores the wildlife data
     var airportIDs = [];// stores the airportIDs
-    var top5 = [];
 
 
     /*
@@ -58,6 +57,12 @@
         });
     }
 
+
+    /*
+    * It takes in the strike data and draws 4 charts
+    * Use crossfilter to get dimensions and grouping
+    * Use dc.js to draw the charts
+    */
     function drawCharts(data){
         d3.selectAll('.hidden').classed('hidden', false);
 
@@ -144,9 +149,22 @@
             .group(numIncidentsBySpecies) // by default, pie charts will use group.key as the label
             .renderLabel(true);
 
+            function resetCharts(e){
+            var maps = {
+                'species-chart': speciesChart,
+                'year-chart': yearChart,
+                'month-chart': monthlyChart,
+                'pie-chart': donut
+            };
+
+            var container = $(e.target).closest('.dc-chart').attr('id');
+            var chart = maps[container];
+
+            chart.filterAll();
+            dc.redrawAll();
+        }
         dc.renderAll();
-
-
+        $('.reset').on('click', resetCharts);
     }
 
     /*
@@ -169,13 +187,7 @@
         originator.radius = 20;
         originator.fillKey = 'origin';
 
-        //if (strikes < top 5th strikes)
-        //  radius = 10;
-        // else
-        //    radius = sqrt(strikes);
-
         bubbles.push(originator);
-        //console.log(bubbles);
 
         map.bubbles(bubbles, {
             popupTemplate: function(geo, data) {
@@ -245,48 +257,6 @@
     // }
 
     /*
-    * Filter airports by airport ID
-    * if aiport ID matches from WL and airports data sets
-    */
-    function filterAirports(airport_id) {
-        var sample =  wlSample.filter(function(d) {
-            return d.AIRPORT_ID === airport_id;
-        });
-        return sample;
-    }
-
-    // function getSpeciesByAirport(airport_id) {
-    //     var sample = filterAirports(airport_id);
-    //     var spcs = sample.map(function(d, index, array) {
-    //         return d.SPECIES;
-    //     });
-    //     spcs.sort();
-    //     // console.log(spcs);
-    //     return spcs;
-    // }
-
-    // function getSpeciesFreqByAirport(airport_id, species) {
-    //     var frequency = 0;
-    //     var spcs = getSpeciesByAirport(airport_id);
-    //     spcs.forEach(function(d) {
-    //         if (d == species) {
-    //             frequency++;
-    //         }
-    //     });
-    //     return frequency;
-    // }
-
-
-    /*
-    * Gets the airport IDs and stores it in airportIDs[].
-    */
-    // function getAirportID() {
-    //     var sample = wlSample.map(function(d, index, array) {
-    //         airportIDs.push(d.AIRPORT_ID);
-    //     });
-    // }
-
-    /*
     * Gets the total costs of repairs for all struck flights out of airport_id.
     */
     function getTotalCostsByAirport(airport_id) {
@@ -305,19 +275,39 @@
         return total;
     }
 
+    /*
+    * Filter airports by airport ID
+    * if aiport ID matches from WL and airports data sets
+    */
+    function filterAirports(airport_id) {
+        var sample =  wlSample.filter(function(d) {
+            return d.AIRPORT_ID === airport_id;
+        });
+        return sample;
+    }
 
     /*
-    *
-    *
+    * Filters the data by airport
+    * Draws the charts for the airport selected
+    * Draws the airport for the airport selected
     */
     function onAirportChanged(evt, selected) {
         var sample = filterAirports(selected.iataCode);
         // check if sample is NULL
         // if NUll print error message
+        if (!sample.length) {
+            $('.msg').addClass('in');
+            $(this).addClass('error').select();
+            return;
+        }
         drawCharts(sample);
         drawAirport(selected);
     }
 
+    /*
+    * Takes in the input from the search bar
+    * Shows top 10 possible airports depending on the words entered
+    */
     function initializeInput(){
        var engine = new Bloodhound({
             name: 'airports',
@@ -340,6 +330,10 @@
         .on('typeahead:selected', onAirportChanged);
     }
 
+    /*
+    * Draws USA map using Datamap
+    * Shows labels for states
+    */
     function initializeMap(){
         map = new Datamap({
             element: document.getElementById('map'),
