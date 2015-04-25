@@ -54,6 +54,7 @@
                 };
             });
             initializeInput();
+
         });
     }
 
@@ -143,10 +144,19 @@
             .width(300)
             .height(300)
             .slicesCap(5)
-            .innerRadius(10)
             .dimension(spcsDim)
-            .innerRadius(100)
             .group(numIncidentsBySpecies) // by default, pie charts will use group.key as the label
+            .title(function(d) { return 'Species: ' + d.key; })
+            .label(function (d) {
+            var label = '';
+            if (donut.hasFilter() && !donut.hasFilter(d.key)) {
+                return '0%';
+            }
+            if (all.value()) {
+                label += '(' + Math.floor(d.value / all.value() * 100) + '%)';
+            }
+            return label;
+        })
             .renderLabel(true);
 
             function resetCharts(e){
@@ -300,6 +310,9 @@
             $(this).addClass('error').select();
             return;
         }
+        $(this).removeClass('error');
+        $('.msg').removeClass('in');
+
         drawCharts(sample);
         drawAirport(selected);
     }
@@ -364,5 +377,6 @@
     fetchAirportsData();
     fetchWildLifeDataSample();
     initializeMap();
+
 
 }());
