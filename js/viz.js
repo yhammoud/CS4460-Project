@@ -73,6 +73,7 @@
         var spcsDim = crfl.dimension(function(d) { return d. SPECIES; });
         var monthDim = crfl.dimension(function(d) { return d.INCIDENT_MONTH; });
         var yearDim = crfl.dimension(function(d) { return d.INCIDENT_YEAR; });
+        var airportDim = crfl.dimension(function(d) { return d.AIRPORT_ID; })
 
         // define data groups
         var all = crfl.groupAll();
@@ -143,7 +144,7 @@
         donut
             .width(300)
             .height(300)
-            .slicesCap(5)
+            .slicesCap(4)
             .dimension(spcsDim)
             .group(numIncidentsBySpecies) // by default, pie charts will use group.key as the label
             .title(function(d) { return 'Species: ' + d.key; })
@@ -159,7 +160,7 @@
         })
             .renderLabel(true);
 
-            function resetCharts(e){
+        function resetCharts(e){
             var maps = {
                 'species-chart': speciesChart,
                 'year-chart': yearChart,
@@ -234,37 +235,6 @@
         return sign + (j ? i.substr(0, j) + thouSeparator : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + thouSeparator) + (decPlaces ? decSeparator + Math.abs(n - i).toFixed(decPlaces).slice(2) : "");
     };
 
-    /*
-    * Store the top 10 airports (strikes number) in arr[]
-    * Draw each airport in arr[]
-    */
-    // function getTop5Airports() {
-    //     var arr = [];
-    //     var tops;
-    //     var tmp = {}, tops = [];
-    //     var sample = wlSample.map(function(d, index, array) {
-    //         airportIDs.push(d.AIRPORT_ID);
-    //     });
-    //     //console.log(sample);
-    //     // Create object with count of occurances of each array element
-    //     airportIDs.forEach(function(item) {
-    //         tmp[item] = tmp[item] ? tmp[item]+1 : 1;
-    //     });
-
-    //     // Create an array of the sorted object properties
-    //     tops = Object.keys(tmp).sort(function(a, b) { return tmp[a] - tmp[b] });
-
-    //     // Return last n elements in reverse order
-    //     arr = (tops.slice(-(5)).reverse());
-    //     // console.log(arr);
-
-    //     arr.forEach(function(d) {
-    //         top5.push(filterAirportsCSV(d));
-    //     });
-    //     //console.log(top5);
-
-    //     return top5;
-    // }
 
     /*
     * Gets the total costs of repairs for all struck flights out of airport_id.

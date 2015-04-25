@@ -67,12 +67,12 @@ div.dc-chart {
 
 .dc-chart .axis path, .axis line {
     fill: none;
-    stroke: #000;
+    stroke: #000000;
     shape-rendering: crispEdges;
 }
 
 .dc-chart .axis text {
-    font: 10px sans-serif;
+    font: 20px sans-serif;
 }
 
 .dc-chart .grid-line {
