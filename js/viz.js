@@ -325,6 +325,16 @@
                 origin: '#AA2519',
                 defaultFill: '#E9D3A1'
             },
+            //Controls the zoom and pan.
+            //Start Here
+            done: function(datamap) {
+           datamap.svg.call(d3.behavior.zoom().on("zoom", redraw));
+
+           function redraw() {
+                datamap.svg.selectAll("g").attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
+            }
+            },
+            // End Here
             geographyConfig: {
                 popupOnHover: true,
                 highlightOnHover: true
